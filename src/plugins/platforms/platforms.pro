@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS += minimal
+qpa:CONFIG(android): SUBDIRS += android
+else:SUBDIRS += minimal
 
 contains(QT_CONFIG, xcb) {
     SUBDIRS += xcb
