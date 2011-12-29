@@ -2470,7 +2470,7 @@ void qsrand(uint seed)
 */
 int qrand()
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN) && !defined(QT_NO_THREAD)
+#if defined(Q_OS_UNIX) && !defined(Q_OS_SYMBIAN) && !defined(QT_NO_THREAD) && !defined(Q_OS_ANDROID)
     SeedStorage *seedStorage = randTLS();
     if (seedStorage) {
         SeedStorageType *pseed = seedStorage->localData();
