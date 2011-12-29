@@ -199,6 +199,8 @@ namespace QT_NAMESPACE {}
 #  define Q_OS_SYMBIAN
 #  define Q_NO_POSIX_SIGNALS
 #  define QT_NO_GETIFADDRS
+#elif defined(ANDROID)
+#  define Q_OS_ANDROID
 #elif defined(__CYGWIN__)
 #  define Q_OS_CYGWIN
 #elif !defined(SAG_COM) && (defined(WIN64) || defined(_WIN64) || defined(__WIN64__))
