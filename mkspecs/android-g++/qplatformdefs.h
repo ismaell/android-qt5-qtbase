@@ -121,6 +121,8 @@
 #  define _GNU_SOURCE
 #endif
 
+#undef QT_LARGEFILE_SUPPORT // FIXME: workaround to compile with necessitas ndk
+
 #ifdef QT_LARGEFILE_SUPPORT
 #define QT_STATBUF              struct stat64
 #define QT_STATBUF4TSTAT        struct stat64
