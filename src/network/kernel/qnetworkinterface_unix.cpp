@@ -57,6 +57,10 @@
 #endif
 #include <net/if.h>
 
+#ifdef Q_OS_ANDROID
+# define QT_NO_IPV6IFNAME
+#endif
+
 #ifndef QT_NO_GETIFADDRS
 # include <ifaddrs.h>
 #endif

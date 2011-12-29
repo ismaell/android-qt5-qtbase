@@ -60,6 +60,11 @@
 #  include <winsock2.h>
 #endif
 
+#ifdef Q_OS_ANDROID
+#  include <sys/socket.h>
+#  include <netinet/in.h>
+#endif
+
 QT_BEGIN_NAMESPACE
 
 // Use our own defines and structs which we know are correct
