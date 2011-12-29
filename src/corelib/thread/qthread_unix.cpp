@@ -258,7 +258,9 @@ void QThreadPrivate::createEventDispatcher(QThreadData *data)
 
 void *QThreadPrivate::start(void *arg)
 {
+#ifndef Q_OS_ANDROID
     pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, NULL);
+#endif
     pthread_cleanup_push(QThreadPrivate::finish, arg);
 
     QThread *thr = reinterpret_cast<QThread *>(arg);
@@ -284,8 +286,10 @@ void *QThreadPrivate::start(void *arg)
         createEventDispatcher(data);
 
     emit thr->started();
+#ifndef Q_OS_ANDROID
     pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
     pthread_testcancel();
+#endif
     thr->run();
 
     pthread_cleanup_pop(1);
@@ -587,7 +591,9 @@ void QThread::start(Priority priority)
     if (code == EPERM) {
         // caller does not have permission to set the scheduling
         // parameters/policy
+#if defined(QT_HAS_THREAD_PRIORITY_SCHEDULING)
         pthread_attr_setinheritsched(&attr, PTHREAD_INHERIT_SCHED);
+#endif
         code =
             pthread_create(&d->thread_id, &attr, QThreadPrivate::start, this);
     }
@@ -611,6 +617,7 @@ void QThread::terminate()
     if (!d->thread_id)
         return;
 
+#ifndef Q_OS_ANDROID
     int code = pthread_cancel(d->thread_id);
     if (code) {
         qWarning("QThread::start: Thread termination error: %s",
@@ -618,6 +625,7 @@ void QThread::terminate()
     } else {
         d->terminated = true;
     }
+#endif
 }
 
 bool QThread::wait(unsigned long time)
@@ -647,9 +655,13 @@ void QThread::setTerminationEnabled(bool enabled)
                "Current thread was not started with QThread.");
 
     Q_UNUSED(thr)
+#ifndef Q_OS_ANDROID
     pthread_setcancelstate(enabled ? PTHREAD_CANCEL_ENABLE : PTHREAD_CANCEL_DISABLE, NULL);
     if (enabled)
         pthread_testcancel();
+#else
+    Q_UNUSED(enabled)
+#endif
 }
 
 void QThread::setPriority(Priority priority)
