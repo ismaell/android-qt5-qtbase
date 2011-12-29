@@ -38,6 +38,10 @@ HEADERS += \
         kernel/qmetatype_p.h \
         kernel/qmetatypeswitcher_p.h \
 
+android {
+  HEADERS -= kernel/qsharedmemory.h
+}
+
 SOURCES += \
         kernel/qabstracteventdispatcher.cpp \
         kernel/qbasictimer.cpp \
