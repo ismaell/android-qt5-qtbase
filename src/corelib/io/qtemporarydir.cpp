@@ -41,7 +41,7 @@
 
 #include "qtemporarydir.h"
 
-#ifndef QT_NO_TEMPORARYFILE
+#if !defined(QT_NO_TEMPORARYFILE) && !defined(QT_NO_TEMPORARYDIR)
 
 #include "qdiriterator.h"
 #include "qplatformdefs.h"
