@@ -56,9 +56,9 @@
 #include "QtGui/qfont.h"
 #include "QtCore/qmap.h"
 #include "QtCore/qobject.h"
-#include <private/qunicodetables_p.h>
+#include <QtCore/5.0.0/QtCore/private/qunicodetables_p.h>
 #include <QtGui/qfontdatabase.h>
-#include "private/qfixed_p.h"
+#include <QtGui/5.0.0/QtGui/private/qfixed_p.h>
 
 QT_BEGIN_NAMESPACE
 

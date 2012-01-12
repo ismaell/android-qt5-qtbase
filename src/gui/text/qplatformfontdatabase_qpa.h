@@ -48,7 +48,7 @@
 #include <QtCore/QList>
 #include <QtCore/QHash>
 #include <QtGui/QFontDatabase>
-#include <QtGui/private/qfont_p.h>
+#include <QtGui/5.0.0/QtGui/private/qfont_p.h>
 
 QT_BEGIN_HEADER
 
