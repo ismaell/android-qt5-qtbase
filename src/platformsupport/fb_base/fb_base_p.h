@@ -49,7 +49,7 @@
 #include <QPlatformCursor>
 #include <QPlatformScreen>
 #include <QPlatformWindow>
-#include <QtGui/private/qwindowsurface_p.h>
+#include <QPlatformBackingStore>
 
 class QMouseEvent;
 class QSize;
@@ -70,7 +70,7 @@ public:
     virtual void pointerEvent(const QMouseEvent & event);
     virtual void changeCursor(QCursor * widgetCursor, QWidget * widget);
 
-    virtual void setDirty() { dirty = true; screen->setDirty(QRect()); }
+    // FIXME: virtual void setDirty() { dirty = true; screen->setDirty(QRect()); }
     virtual bool isDirty() { return dirty; }
     virtual bool isOnScreen() { return onScreen; }
     virtual QRect lastPainted() { return prevRect; }
@@ -91,14 +91,14 @@ private:
 
 class QFbWindow;
 
-class QFbWindowSurface : public QWindowSurface
+class QFbWindowSurface : public QPlatformBackingStore
 {
 public:
     QFbWindowSurface(QFbScreen *screen, QWidget *window);
     ~QFbWindowSurface();
 
     virtual QPaintDevice *paintDevice() { return &mImage; }
-    virtual void flush(QWidget *widget, const QRegion &region, const QPoint &offset);
+    virtual void flush(QWindow *widget, const QRegion &region, const QPoint &offset);
     virtual bool scroll(const QRegion &area, int dx, int dy);
 
     virtual void beginPaint(const QRegion &region);
@@ -106,7 +106,7 @@ public:
 
 
     const QImage image() { return mImage; }
-    void resize(const QSize &size);
+    virtual void resize(const QSize &size, const QRegion &region);
 
 protected:
     friend class QFbWindow;
@@ -162,7 +162,7 @@ public:
     virtual QRect geometry() const { return mGeometry; }
     virtual int depth() const { return mDepth; }
     virtual QImage::Format format() const { return mFormat; }
-    virtual QSize physicalSize() const { return mPhysicalSize; }
+    virtual QSizeF physicalSize() const { return mPhysicalSize; }
 
     virtual void setGeometry(QRect rect);
     virtual void setDepth(int depth);
@@ -175,7 +175,7 @@ public:
     virtual void addWindow(QFbWindow * surface);
     virtual void raise(QPlatformWindow * surface);
     virtual void lower(QPlatformWindow * surface);
-    virtual QWidget * topLevelAt(const QPoint & p) const;
+    virtual QWindow * topLevelAt(const QPoint & p) const;
 
     QImage * image() const { return mScreenImage; }
     QPaintDevice * paintDevice() const { return mScreenImage; }

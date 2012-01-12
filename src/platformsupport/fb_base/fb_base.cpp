@@ -401,7 +401,7 @@ QFbWindowSurface::~QFbWindowSurface()
 {
 }
 
-void QFbWindowSurface::flush(QWidget *widget, const QRegion &region, const QPoint &offset)
+void QFbWindowSurface::flush(QWindow *widget, const QRegion &region, const QPoint &offset)
 {
     Q_UNUSED(widget);
     Q_UNUSED(offset);
@@ -437,8 +437,10 @@ void QFbWindow::repaint(const QRegion &region)
     }
 }
 
-void QFbWindowSurface::resize(const QSize &size)
+void QFbWindowSurface::resize(const QSize &size, const QRegion &region)
 {
+    Q_UNUSED(region);
+
     // change the widget's QImage if this is a resize
     if (mImage.size() != size)
         mImage = QImage(size, mScreen->format());
