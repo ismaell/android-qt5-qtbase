@@ -28,10 +28,11 @@
 #ifndef ANDROIDPLATFORMDESKTOPSERVICE_H
 #define ANDROIDPLATFORMDESKTOPSERVICE_H
 
-#include <QPlatformDesktopService>
+//#include <QPlatformDesktopService>
 #include "androidjnimain.h"
 #include <jni.h>
 
+#if 0
 class QAndroidPlatformDesktopService: public QPlatformDesktopService
 {
 public:
@@ -43,5 +44,6 @@ private:
     jmethodID m_openURIMethodID;
 
 };
+#endif
 
 #endif // ANDROIDPLATFORMDESKTOPSERVICE_H

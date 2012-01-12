@@ -28,9 +28,9 @@
 #ifndef QANDROIDPLATFORMSCREEN_H
 #define QANDROIDPLATFORMSCREEN_H
 
-#include "fb_base.h"
+#include <QtPlatformSupport/5.0.0/QtPlatformSupport/private/fb_base_p.h>
 
-class QAndroidPlatformScreen : public QFbScreen
+class QAndroidPlatformScreen : public QObject, public QFbScreen
 {
     Q_OBJECT
 public:

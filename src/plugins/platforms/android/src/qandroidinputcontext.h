@@ -28,7 +28,7 @@
 #ifndef ANDROIDINPUTCONTEXT_H
 #define ANDROIDINPUTCONTEXT_H
 
-#include <QInputContext>
+#include <QtWidgets/QInputContext>
 
 class QAndroidInputContext : public QInputContext
 {

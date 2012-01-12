@@ -28,15 +28,17 @@
 #include "qandroidplatformintegration.h"
 #include "qandroidinputcontext.h"
 #include "qabstracteventdispatcher.h"
-#include "qbasicunixfontdatabase.h"
+#include <QtPlatformSupport/5.0.0/QtPlatformSupport/private/qbasicfontdatabase_p.h>
+#include <QtGui/qfontdatabase.h>
 #include "androidjnimain.h"
-#include <QtGui/private/qpixmap_raster_p.h>
+#include <QtGui/5.0.0/QtGui/private/qpixmap_raster_p.h>
 #include <QWindowSystemInterface>
 #include <QThread>
+#include <QDebug>
 #include <QPlatformWindow>
 #include <QDir>
-#include <QApplication>
-#include "qdesktopwidget.h"
+#include <QtWidgets/QApplication>
+#include "QtWidgets/qdesktopwidget.h"
 #include "qandroidplatformdesktopservice.h"
 
 #ifdef ANDROID_PLUGIN_OPENGL
@@ -54,7 +56,7 @@ int QAndroidPlatformIntegration::m_defaultGeometryHeight=455;
 int QAndroidPlatformIntegration::m_defaultPhysicalSizeWidth=50;
 int QAndroidPlatformIntegration::m_defaultPhysicalSizeHeight=71;
 
-class QAndroidPlatformFontDatabase: public QBasicUnixFontDatabase
+class QAndroidPlatformFontDatabase: public QBasicFontDatabase
 {
 public:
     QString fontDir() const {
@@ -115,7 +117,7 @@ QAndroidPlatformIntegration::QAndroidPlatformIntegration()
     QtAndroid::setAndroidPlatformIntegration(this);
     qApp->setInputContext( new QAndroidInputContext() );
     m_androidFDB = new QAndroidPlatformFontDatabase();
-    m_androidPlatformDesktopService = new QAndroidPlatformDesktopService();
+    // FIXME: m_androidPlatformDesktopService = new QAndroidPlatformDesktopService();
 
 }
 
@@ -146,10 +148,12 @@ QPlatformNativeInterface *QAndroidPlatformIntegration::nativeInterface() const
     return m_androidPlatformNativeInterface;
 }
 
+#if 0 // FIXME
 QPlatformDesktopService * QAndroidPlatformIntegration::platformDesktopService()
 {
     return m_androidPlatformDesktopService;
 }
+#endif
 
 void QAndroidPlatformIntegration::setDefaultDisplayMetrics(int gw, int gh, int sw, int sh)
 {
@@ -165,38 +169,37 @@ void QAndroidPlatformIntegration::setDefaultDesktopSize(int gw, int gh)
     m_defaultGeometryHeight=gh;
 }
 
-QPixmapData *QAndroidPlatformIntegration::createPixmapData(QPixmapData::PixelType type) const
+QPlatformPixmap *QAndroidPlatformIntegration::createPixmapData(QPlatformPixmap::PixelType type) const
 {
 #ifdef ANDROID_PLUGIN_OPENGL
-    return new QGLPixmapData(type);
+    return new QGLPlatformPixmap(type);
 #else
-    return new QRasterPixmapData(type);
+    return new QRasterPlatformPixmap(type);
 #endif
 }
 
-QWindowSurface *QAndroidPlatformIntegration::createWindowSurface(QWidget *widget, WId /*winId*/) const
+QPlatformBackingStore *QAndroidPlatformIntegration::createPlatformBackingStore(QWindow *widget) const
 {
 #ifdef ANDROID_PLUGIN_OPENGL
         Q_ASSERT(dynamic_cast<QAndroidEglFSScreen*>(m_primaryScreen) != 0);
         return new QAndroidEglFSWindowSurface(dynamic_cast<QAndroidEglFSScreen*>(m_primaryScreen), widget);
 #else
-    return new QFbWindowSurface(dynamic_cast<QFbScreen*>(m_primaryScreen), widget);
+        return new QFbWindowSurface(dynamic_cast<QFbScreen*>(m_primaryScreen), widget);
 #endif
 }
 
-QPlatformWindow *QAndroidPlatformIntegration::createPlatformWindow(QWidget *widget, WId /*winId*/) const
+QPlatformWindow *QAndroidPlatformIntegration::createPlatformWindow(QWindow *widget) const
 {
 #ifdef ANDROID_PLUGIN_OPENGL
         Q_ASSERT(dynamic_cast<QAndroidEglFSScreen*>(m_primaryScreen) != 0);
         return  new QAndroidEglFSWindow(widget, dynamic_cast<QAndroidEglFSScreen*>(m_primaryScreen));
 #else
-    QFbWindow *w = new QFbWindow(widget);
+    QFbWindow *w = new QFbWindow(static_cast<QWidget *>(widget));
     dynamic_cast<QFbScreen*>(m_primaryScreen)->addWindow(w);
-    qDebug()<<"createPlatformWindow"<<widget->isFullScreen();
-    if (widget->isFullScreen())
-        QtAndroid::setFullScreen(true);
-    else
-        QtAndroid::setFullScreen(false);
+
+    bool is_fullscreen = true /* FIXME: widget->isFullScreen() */;
+    qDebug() << "createPlatformWindow" << is_fullscreen;
+    QtAndroid::setFullScreen(is_fullscreen);
     return w;
 #endif
 }
@@ -205,7 +208,7 @@ void QAndroidPlatformIntegration::setDesktopSize(int width, int height)
 {
     qDebug()<<"setDesktopSize";
     if (m_primaryScreen)
-        QMetaObject::invokeMethod(m_primaryScreen, "setGeometry", Qt::AutoConnection, Q_ARG(QRect, QRect(0,0,width, height)));
+        QMetaObject::invokeMethod(static_cast<QObject *>(m_primaryScreen), "setGeometry", Qt::AutoConnection, Q_ARG(QRect, QRect(0,0,width, height)));
     qDebug()<<"setDesktopSize done";
 }
 
@@ -213,7 +216,7 @@ void QAndroidPlatformIntegration::setDisplayMetrics(int width, int height)
 {
     qDebug()<<"setDisplayMetrics";
     if (m_primaryScreen)
-        QMetaObject::invokeMethod(m_primaryScreen, "setPhysicalSize", Qt::AutoConnection, Q_ARG(QSize, QSize(width, height)));
+        QMetaObject::invokeMethod(static_cast<QObject *>(m_primaryScreen), "setPhysicalSize", Qt::AutoConnection, Q_ARG(QSize, QSize(width, height)));
     qDebug()<<"setDisplayMetrics done";
 }
 
@@ -233,7 +236,7 @@ void QAndroidPlatformIntegration::resumeApp()
 void QAndroidPlatformIntegration::surfaceChanged()
 {
     if (m_primaryScreen)
-        QMetaObject::invokeMethod(m_primaryScreen, "surfaceChanged", Qt::AutoConnection);
+        QMetaObject::invokeMethod(static_cast<QObject *>(m_primaryScreen), "surfaceChanged", Qt::AutoConnection);
 }
 #endif
 

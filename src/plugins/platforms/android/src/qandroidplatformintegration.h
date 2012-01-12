@@ -28,8 +28,9 @@
 #ifndef QANDROIDPLATFORMINTERATION_H
 #define QANDROIDPLATFORMINTERATION_H
 
-#include <QPlatformIntegration>
-#include <QPlatformNativeInterface>
+#include <QtGui/QPlatformIntegration>
+#include <QtGui/QPlatformNativeInterface>
+#include <QPlatformWindow>
 #include <jni.h>
 
 QT_BEGIN_NAMESPACE
@@ -52,9 +53,10 @@ public:
     QAndroidPlatformIntegration();
     ~QAndroidPlatformIntegration();
 
-    QPixmapData *createPixmapData(QPixmapData::PixelType type) const;
-    QWindowSurface *createWindowSurface(QWidget *widget, WId winId) const;
-    QPlatformWindow *createPlatformWindow(QWidget *widget, WId winId = 0) const;
+    QPlatformPixmap *createPixmapData(QPlatformPixmap::PixelType type) const;
+    QPlatformBackingStore *createPlatformBackingStore(QWindow *widget) const;
+    QPlatformWindow *createPlatformWindow(QWindow *widget) const;
+    QAbstractEventDispatcher *guiThreadEventDispatcher() const; // FIXME
 
     QList<QPlatformScreen *> screens() const { return m_screens; }
 
@@ -64,7 +66,7 @@ public:
     virtual void setDisplayMetrics(int width, int height);
     QPlatformFontDatabase *fontDatabase() const;
     virtual QPlatformNativeInterface *nativeInterface() const;
-    virtual QPlatformDesktopService * platformDesktopService();
+    // FIXME: virtual QPlatformDesktopService * platformDesktopService();
     virtual bool hasCapability(Capability cap) const;
 
     void pauseApp();

@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QDebug>
 
+#if 0
 QAndroidPlatformDesktopService::QAndroidPlatformDesktopService()
 {
     JNIEnv* env;
@@ -102,3 +103,4 @@ QString QAndroidPlatformDesktopService::storageLocation ( QDesktopServices::Stan
     }
     return QString();
 }
+#endif

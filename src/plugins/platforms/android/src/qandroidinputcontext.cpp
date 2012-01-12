@@ -76,8 +76,10 @@ bool QAndroidInputContext::filterEvent( const QEvent * event )
         case QEvent::CloseSoftwareInputPanel:
                 QtAndroid::hideSoftwareKeyboard();
             break;
+#if 0 // FIXME
         default:
             return QInputContext::filterEvent(event);
+#endif
     }
     return true;
 }

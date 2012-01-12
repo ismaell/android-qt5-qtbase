@@ -40,7 +40,8 @@
 #include "androidjnimain.h"
 #include "qandroidplatformintegration.h"
 #include <QWindowSystemInterface>
-#include <QApplication>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QWidget>
 #include <QTouchEvent>
 
 #include <qabstracteventdispatcher.h>
@@ -422,7 +423,7 @@ static void setDisplayMetrics(JNIEnv* /*env*/, jclass /*clazz*/,
 static void mouseDown(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint x, jint y)
 {
     QPoint globalPos(x,y);
-    QWidget *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
+    QWindow *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
     QPoint localPos=tlw?globalPos-tlw->pos():globalPos;
     QWindowSystemInterface::handleMouseEvent(tlw, localPos, globalPos
                                              , Qt::MouseButtons(Qt::LeftButton));
@@ -431,7 +432,7 @@ static void mouseDown(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint x,
 static void mouseUp(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint x, jint y)
 {
     QPoint globalPos(x,y);
-    QWidget *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
+    QWindow *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
     QPoint localPos=tlw?globalPos-tlw->pos():globalPos;
     QWindowSystemInterface::handleMouseEvent(tlw, localPos, globalPos
                                              , Qt::MouseButtons(Qt::NoButton));
@@ -440,7 +441,7 @@ static void mouseUp(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint x, j
 static void mouseMove(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint x, jint y)
 {
     QPoint globalPos(x,y);
-    QWidget *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
+    QWindow *tlw = m_androidGraphicsSystem?m_androidGraphicsSystem->getPrimaryScreen()->topLevelAt(globalPos):0;
     QPoint localPos=tlw?globalPos-tlw->pos():globalPos;
     QWindowSystemInterface::handleMouseEvent(tlw, localPos, globalPos
                                              , Qt::MouseButtons(Qt::LeftButton));
@@ -473,7 +474,7 @@ static void touchAdd(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint id,
     touchPoint.id=id;
     touchPoint.pressure=pressure;
     touchPoint.normalPosition=QPointF((double)x/m_desktopWidthPixels, (double)y/m_desktopHeightPixels);
-    touchPoint.isPrimary=primary;
+    // FIXME: touchPoint.isPrimary=primary;
     touchPoint.state=state;
     touchPoint.area=QRectF(x-((double)m_desktopWidthPixels*size)/2,
                            y-((double)m_desktopHeightPixels*size)/2,
@@ -498,7 +499,7 @@ static void touchEnd(JNIEnv */*env*/, jobject /*thiz*/, jint /*winId*/, jint act
             break;
     }
 
-    QWindowSystemInterface::handleTouchEvent(0, eventType, QTouchEvent::TouchScreen, m_touchPoints);
+    // FIXME: QWindowSystemInterface::handleTouchEvent(0, eventType, QTouchEvent::TouchScreen, m_touchPoints);
 }
 
 static int mapAndroidKey(int key)
