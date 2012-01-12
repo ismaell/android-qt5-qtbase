@@ -7,6 +7,7 @@ win32:SRC_SUBDIRS += src_winmain
 SRC_SUBDIRS += src_corelib
 SRC_SUBDIRS += src_network src_sql src_gui src_xml src_widgets src_printsupport src_testlib src_platformsupport
 nacl: SRC_SUBDIRS -= src_network src_testlib
+android: SRC_SUBDIRS -= src_printsupport
 contains(QT_CONFIG, dbus):SRC_SUBDIRS += src_dbus
 
 contains(QT_CONFIG, no-gui): SRC_SUBDIRS -= src_gui
