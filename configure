@@ -5887,6 +5887,10 @@ if [ "$PLATFORM_QPA" = "yes" ]; then
             QMakeVar set QMAKE_INCDIR_OPENGL_ES2 "$QMAKE_INCDIR_OPENGL_ES2"
             QMakeVar set QMAKE_LIBDIR_OPENGL_ES2 "$QMAKE_LIBDIR_OPENGL_ES2"
             QMakeVar set QMAKE_LIBS_OPENGL_ES2 "$QMAKE_LIBS_OPENGL_ES2"
+	fi
+
+        if [ "$XPLATFORM" = "android-g++" ]; then
+	    QMAKE_CFLAGS_OPENGL_ES2="-Wl,-allow-shlib-undefined $QMAKE_CFLAGS_OPENGL_ES2"
         fi
 
         "$unixtests/compile.test" "$XQMAKESPEC" "$QMAKE_CONFIG" $OPT_VERBOSE "$relpath" "$outpath" config.tests/unix/opengles2 "OpenGL ES 2.x" $L_FLAGS $I_FLAGS $l_FLAGS $QMAKE_LIBS_OPENGL_ES2 $QMAKE_CFLAGS_OPENGL_ES2
